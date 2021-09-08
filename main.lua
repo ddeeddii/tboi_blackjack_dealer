@@ -25,7 +25,6 @@ local function shuffle(tbl) -- Credit: https://gist.github.com/Uradamus/10323382
 local function deal(deck)
     local hand = {}
     for i = 0, 1 do
-        print("dealing deck " .. i)
         shuffle(deck)
         local card = table.remove(deck, 1)
         if card == 11 then
@@ -62,24 +61,24 @@ local function getTotalInHand(hand)
 
     for i, card in pairs(hand) do
 
-        bjPrint(card)
+        -- bjPrint(card)
         if card == "J" or card == "Q" or card == "K" or card == "A" then
-            bjPrint("card delcared as special")
+            -- bjPrint("card delcared as special")
             if card == "A" then
-                bjPrint("card declared as ace")
+                -- bjPrint("card declared as ace")
                 if total >= 11 then
-                    bjPrint("ace adds 1")
+                    -- bjPrint("ace adds 1")
                     total = total + 1
                 else
-                    bjPrint("ace adds 11")
+                    -- bjPrint("ace adds 11")
                     total = total + 11
                 end                
             else
-                bjPrint("special card adds 10")
+                -- bjPrint("special card adds 10")
                 total = total + 10
             end
         elseif card ~= "J" or card ~= "Q" or card ~= "K" or card ~= "A" then
-            bjPrint("card declared as non-special")
+            -- bjPrint("card declared as non-special")
             total = total + card
         end   
     end
@@ -131,7 +130,15 @@ local function declareWinner(playerHand, dealerHand)
         winner = "player"
         bjPrint("The player has won the game! (More value)")
         print("The player has won the game! (More value)")
+    elseif getTotalInHand(playerHand) == getTotalInHand(dealerHand) then
+        winner = "tie"
+        bjPrint("Push / Tie! (Both have the same card values!)")
+        print("Push / Tie! (Both have the same card values!)")
+    else
+        bjPrint("Something weird has happened")
+        print("Something weird has happened")
     end
+
 end
 
 function blackjackDealerMod:onRender()
