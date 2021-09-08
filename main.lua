@@ -8,6 +8,9 @@ local playerHand
 local dealerHand
 local deck = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
 --                                         J   Q   K   A                             J   Q   K   A                                 J   Q   K   A                              J   Q   K   A
+local waitForKeyPress
+local hitAmount 
+local dealerHitAmount 
 
 local function bjPrint(text)
     Isaac.DebugString("BJ| " .. tostring(text))
@@ -87,21 +90,12 @@ local function getTotalInHand(hand)
 end
 
 local function resetGame()
+    waitForKeyPress = false
+    hitAmount = 0
+    dealerHitAmount = 0
     playerHand = nil
     dealerHand = nil
     deck = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
-end
-
-local function hasBlackjack(playerHand, dealerHand)
-    local pWithBlackjack
-    if getTotalInHand(playerHand) == 21 then -- Player has Blackjack
-        pWithBlackjack = "player"
-    elseif getTotalInHand(dealerHand) == 21 then -- Dealer has Blackjack
-        pWithBlackjack = "dealer"
-    else
-        pWithBlackjack = nil
-    end
-        return pWithBlackjack
 end
 
 local function declareWinner(playerHand, dealerHand)
@@ -139,27 +133,28 @@ local function declareWinner(playerHand, dealerHand)
         print("Something weird has happened")
     end
 
+    resetGame()
+    print("Game reset! Press Z to start a new game")
 end
 
 function blackjackDealerMod:onRender()
 
     if game:GetFrameCount() == 1 then
-        local waitForKeyPress = false
-        hitAmount = 0
-        dealerHitAmount = 0
         resetGame()
     end
 
     if playerHand == nil and Input.IsButtonTriggered(Keyboard.KEY_Z, 0) then
+        bjPrint("New Game Started")
+        print("----- NEW GAME STARTED -----")
         print("Welcome to Blackjack!")
         playerHand = deal(deck)
         dealerHand = deal(deck)
         print("The dealer shows: " .. tostring(dealerHand[1]))
         print("You have: " .. tostring(playerHand[1]) .. " and " .. tostring(playerHand[2]) .. " for a total of " .. tostring(getTotalInHand(playerHand)))
-        if hasBlackjack(playerHand, dealerHand) == "player" then
-            print("You've won with blackjack.")
-        elseif hasBlackjack(playerHand, dealerHand) == "dealer" then
-            print("The dealer has won with blackjack.")
+        if getTotalInHand(playerHand) == 21 or getTotalInHand(dealerHand) == 21 then -- Player or dealer has Blackjack
+            declareWinner(playerHand, dealerHand)
+            return nil
+
         end
         print("Do you wish to hit (Press H) or stand (Press J)?")
         waitForKeyPress = true
