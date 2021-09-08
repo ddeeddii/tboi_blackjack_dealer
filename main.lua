@@ -190,6 +190,8 @@ function blackjackDealerMod:onRender()
         
     if waitForKeyPress and Input.IsButtonTriggered(Keyboard.KEY_J, 0) then
         waitForKeyPress = false
+        print("--- You stand ---")
+        print("The dealer reveals his cards: " .. tostring(dealerHand[1]) .. " and " .. tostring(dealerHand[2]) .. " for a total of " .. tostring(getTotalInHand(dealerHand)))
         while getTotalInHand(dealerHand) < 17 do
             print("--- The dealer hits ---")
             hit(dealerHand)
