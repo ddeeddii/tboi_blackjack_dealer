@@ -650,7 +650,7 @@ function blackjackDealerMod:newRoom()
 		local rng = RNG()
 		rng:SetSeed(seed, 0)
 
-        if rng:RandomInt(100) <= 100 then 
+        if rng:RandomInt(100) <= 50 then 
             local slotEnts = Isaac.FindByType(EntityType.ENTITY_SLOT, -1, -1, false, false)
             local viable_slots = {}
 
