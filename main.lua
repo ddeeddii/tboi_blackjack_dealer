@@ -51,6 +51,7 @@ end
 
 local function bjPrint(text)
     Isaac.DebugString("BJ| " .. tostring(text))
+    print("BJ| " .. tostring(text))
 end
 
 local function randomObjFromTable(table)
@@ -74,8 +75,8 @@ local function shuffle(tbl) -- Credit: https://gist.github.com/Uradamus/10323382
 -- Blackjack base implementation, heavily "inspired" by https://gist.github.com/mjhea0/5680216
 local function deal(deck)
     local hand = {}
+    shuffle(deck)
     for i = 0, 1 do
-        shuffle(deck)
         local card = table.remove(deck, 1)
         if card == 11 then
             card = "J"
@@ -121,6 +122,7 @@ local function getTotalInHand(hand)
             else
                 total = total + 10
             end
+
         elseif card ~= "J" or card ~= "Q" or card ~= "K" or card ~= "A" then
             total = total + card
         end
@@ -292,9 +294,6 @@ function blackjackDealerMod:onRender()
             arrowPos = 1
         end
 
-        local mousePos = Input.GetMousePosition(true) -- get mouse position in world coordinates
-        local screenPos = Isaac.WorldToScreen(mousePos) -- transfer game- to screen coordinates
-
         local paperBg = Sprite()
         paperBg:Load("gfx/ui/paperbg.anm2", true)
         paperBg:SetAnimation("main", true)
@@ -330,7 +329,8 @@ function blackjackDealerMod:onRender()
             if dealerCardRevealed and dealerHand[2] ~= nil then
                 cardSprite:SetAnimation(dealerHand[2], true)
                 cardSprite:SetFrame(1)
-                cardSprite:Render(Vector(220, 85), Vector(0,0), Vector(0,0))    
+                cardSprite:Render(Vector(220, 85), Vector(0,0), Vector(0,0))  
+
             elseif dealerCardRevealed == false and dealerHand[2] ~= nil then
                 cardSprite:SetAnimation("back", true)
                 cardSprite:SetFrame(1)
@@ -343,22 +343,28 @@ function blackjackDealerMod:onRender()
                 cardSprite:Render(Vector(260, 85), Vector(0,0), Vector(0,0))
             end
 
-            if dealerHitAmount >= 2 and dealerHand[3] ~= nil then
+            if dealerHitAmount >= 2 and dealerHand[4] ~= nil then
                 cardSprite:SetAnimation(dealerHand[4], true)
                 cardSprite:SetFrame(1)
                 cardSprite:Render(Vector(300, 85), Vector(0,0), Vector(0,0))
             end
 
-            if dealerHitAmount >= 3 and dealerHand[3] ~= nil then
+            if dealerHitAmount >= 3 and dealerHand[5] ~= nil then
                 cardSprite:SetAnimation(dealerHand[5], true)
                 cardSprite:SetFrame(1)
                 cardSprite:Render(Vector(340, 85), Vector(0,0), Vector(0,0))
             end
 
-            if dealerHitAmount >= 4 and dealerHand[3] ~= nil then
+            if dealerHitAmount >= 4 and dealerHand[6] ~= nil then
                 cardSprite:SetAnimation(dealerHand[6], true)
                 cardSprite:SetFrame(1)
                 cardSprite:Render(Vector(380, 85), Vector(0,0), Vector(0,0))
+            end
+
+            if dealerHitAmount >= 5 and dealerHand[7] ~= nil then
+                cardSprite:SetAnimation(dealerHand[7], true)
+                cardSprite:SetFrame(1)
+                cardSprite:Render(Vector(400, 85), Vector(0,0), Vector(0,0))
             end
 
         end
@@ -392,7 +398,7 @@ function blackjackDealerMod:onRender()
             end
 
             if hitAmount >= 3 and playerHand[5] ~= nil then
-                cardSprite:SetAnimation(playerHand[5], true)
+                cardSprite:SetAnimation(playerHand[5], true)    
                 cardSprite:SetFrame(1)
                 cardSprite:Render(Vector(340, 170), Vector(0,0), Vector(0,0))
             end
@@ -452,6 +458,7 @@ function blackjackDealerMod:onRender()
             standTime = game:GetFrameCount()
             doStand = true
             lockControl = true
+            -- bjPrint("1) Standing, controls: " ..  tostring(lockControl) .. " ; dostand: " .. tostring(doStand) .. " ; standtime: " .. tostring(standTime) )
         end
 
         if doStand then
@@ -460,24 +467,40 @@ function blackjackDealerMod:onRender()
                 -- print("Card revealed!")
                 playSound(SoundEffect.SOUND_PAPER_OUT)
                 standTime = game:GetFrameCount()
+                -- bjPrint("2) Card revealed, standtime: " .. standTime)
+                -- bjPrint("3) dealer's hand: " .. dealerHand[1] .. " ; " .. dealerHand[2])
             end
 
             if getTotalInHand(dealerHand) < 17 then
+
+                -- bjPrint("4) Total in hand less than 17")
+
                 if game:GetFrameCount() >= standTime + 60 then
+                    -- bjPrint("5) About to hit.")
                     hit(dealerHand)
                     dealerHitAmount = dealerHitAmount + 1
                     playSound(SoundEffect.SOUND_PAPER_OUT)
 
+                    -- bjPrint("6) Hit, hit count: " .. dealerHitAmount .. " Card 3: " .. tostring(dealerHand[3]) .. " | Card 4: " .. tostring(dealerHand[4]) .. " | Card 5: " .. tostring(dealerHand[5]) .. " | Card 6: " .. tostring(dealerHand[6]))
+
                     if getTotalInHand(dealerHand) > 21 then
-                        -- print("The dealer busts.")
+                        -- bjPrint("7) Dealer bust")
+                        doStand = false
+                        finishGame = true
+                        return nil
                     end
 
                     standTime = game:GetFrameCount()
+                    -- bjPrint("8) Fully completed, reseting standTime, standtime: " .. standTime)
                 end
 
             else
+
+                -- bjPrint("9) Total in hand is more than 17 or something else")
+
                 doStand = false
                 finishGame = true
+                return nil
             end
         end
 
@@ -517,6 +540,7 @@ function blackjackDealerMod:onRender()
         end
         
     end
+
 end
 blackjackDealerMod:AddCallback(ModCallbacks.MC_POST_RENDER, blackjackDealerMod.onRender)
 
@@ -650,6 +674,7 @@ function blackjackDealerMod:newRoom()
 		local rng = RNG()
 		rng:SetSeed(seed, 0)
 
+        
         if rng:RandomInt(100) <= 50 then 
             local slotEnts = Isaac.FindByType(EntityType.ENTITY_SLOT, -1, -1, false, false)
             local viable_slots = {}

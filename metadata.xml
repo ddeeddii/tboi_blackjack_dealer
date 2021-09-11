@@ -1,8 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-	<name>blackjack_dealer</name>
-	<directory>blackjack_dealer</directory>
-	<description/>
-	<version>1.0</version>
-	<visibility/>
-</metadata>
+    <name>Blackjack Dealer</name>
+    <directory>blackjack dealer</directory>
+    <id>2599546253</id>
+    <description>Time to fuel your gambling addiction with the Blackjack Dealer mod!
 
+This mod adds a blackjack dealer beggar to arcade rooms.
+
+The spawn chance is 50% to replace any machine, beggar or shell game in an arcade room.
+
+To play blackjack - you simply collide with him. That will cost you 5 cents. If you win, you get your coins back.
+
+How to play blackjack? Look it up.
+
+Controls:
+Shoot left/right - Change the arrow to go hit/stand
+Bomb - Trigger the action selected by the arrow
+Drop - Leave the menu
+
+Payouts:
+40% - 1 &quot;Special&quot; card which is basically just a playing card.
+20% - 2 Random cards
+15% - 1 Lucky penny &amp; 2 normal pennies
+10% -  2 Keys &amp; 2 bombs
+5% - 1 Dime
+3% - 1 Random item from the claw machine item pool
+3% - 1 Chest
+2% - 1 Random Trinket
+1% - Destruction of the beggar
+
+Known bugs:
+Max amount of cards is 7 before they start getting off the paper
+
+Thanks to Discowy 2.0 for the help with sprites and balancing.</description>
+    <version>1.1</version>
+    <visibility>Public</visibility>
+    <tag id="Lua"/>
+    <tag id="Familiars"/>
+</metadata>
