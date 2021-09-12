@@ -39,6 +39,8 @@ local specialCards = {Card.CARD_CLUBS_2, Card.CARD_DIAMONDS_2, Card.CARD_SPADES_
 
 local startRng
 
+local bjDealerSpawnChance 
+
 
 local f = Font()
 f:Load("font/Upheaval.fnt")
@@ -239,22 +241,45 @@ local function getWinMessage(playerHand, dealerHand)
     return winMsg
 end
 
+function blackjackDealerMod:OnGameStart(isSave)
+
+    if blackjackDealerMod:HasData() == false then
+        bjDealerSpawnChance = 50
+    else
+        bjDealerSpawnChance = blackjackDealerMod:LoadData()
+    end
+
+    resetGame()
+    bjEnt = nil
+    bjPos = nil
+    bjSprite = nil
+    wasTouched = false
+    gameWon = false
+    startRng = nil
+
+    local startseed = game:GetSeeds():GetStartSeed()
+    startRng = RNG()
+    startRng:SetSeed(startseed, 0)
+
+end
+blackjackDealerMod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, blackjackDealerMod.OnGameStart)
+
 function blackjackDealerMod:onRender()
 
-    if game:GetFrameCount() == 1 then
-        resetGame()
-        bjEnt = nil
-        bjPos = nil
-        bjSprite = nil
-        wasTouched = false
-        gameWon = false
-        startRng = nil
+    -- if game:GetFrameCount() == 1 then
+    --     resetGame()
+    --     bjEnt = nil
+    --     bjPos = nil
+    --     bjSprite = nil
+    --     wasTouched = false
+    --     gameWon = false
+    --     startRng = nil
 
-        local startseed = game:GetSeeds():GetStartSeed()
-        startRng = RNG()
-        startRng:SetSeed(startseed, 0)
+    --     local startseed = game:GetSeeds():GetStartSeed()
+    --     startRng = RNG()
+    --     startRng:SetSeed(startseed, 0)
 
-    end
+    -- end
 
     if Input.IsActionTriggered(ButtonAction.ACTION_DROP, 0) then
         if displayMenu then
@@ -673,9 +698,8 @@ function blackjackDealerMod:newRoom()
 		local seed = game:GetSeeds():GetStageSeed(stage)
 		local rng = RNG()
 		rng:SetSeed(seed, 0)
-
         
-        if rng:RandomInt(100) <= 50 then 
+        if rng:RandomInt(100) <= tonumber(bjDealerSpawnChance) then 
             local slotEnts = Isaac.FindByType(EntityType.ENTITY_SLOT, -1, -1, false, false)
             local viable_slots = {}
 
@@ -701,3 +725,32 @@ function blackjackDealerMod:newRoom()
 
 end
 blackjackDealerMod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, blackjackDealerMod.newRoom)
+
+if ModConfigMenu then -- Mod config menu support
+	ModConfigMenu.AddSetting("Blackjack Dealer",{ 
+		Type = ModConfigMenu.OptionType.NUMBER,
+
+		CurrentSetting = function()
+			return bjDealerSpawnChance
+		end,
+
+		Display = function()
+			return "Blackjack Dealer spawn chance: " .. tostring(bjDealerSpawnChance) .. "%"
+		end,
+
+		Minimum = 0,
+		Maximum = 99,
+
+		OnChange = function(currentNum)
+			bjDealerSpawnChance = currentNum
+
+            blackjackDealerMod:SaveData(bjDealerSpawnChance )
+		end,
+
+		Info = {
+			"Percentage chance for Blackjack Dealer",
+			"to spawn/replace a machine/beggar/shell game",
+            "inside of an arcade."
+		}
+	})
+end

@@ -3,37 +3,44 @@
     <name>Blackjack Dealer</name>
     <directory>blackjack dealer</directory>
     <id>2599546253</id>
-    <description>Time to fuel your gambling addiction with the Blackjack Dealer mod!
+    <description>[h1] Time to fuel your gambling addiction with the Blackjack Dealer mod! [/h1]
 
-This mod adds a blackjack dealer beggar to arcade rooms.
+This mod adds a blackjack dealer beggar to [b]arcade rooms[/b].
 
 The spawn chance is 50% to replace any machine, beggar or shell game in an arcade room.
 
-To play blackjack - you simply collide with him. That will cost you 5 cents. If you win, you get your coins back.
+To play blackjack - you simply walk up to him. One game costs [b]5 cents[/b]. If you win, you get your coins back on top of the reward.
 
-How to play blackjack? Look it up.
+[b]How to play blackjack? Check the Discussions or [url=https://www.blackjackapprenticeship.com/how-to-play-blackjack/] look it up. [/url][/b]
 
-Controls:
-Shoot left/right - Change the arrow to go hit/stand
-Bomb - Trigger the action selected by the arrow
-Drop - Leave the menu
+[b]Controls:[/b]
+[list]
+[*]Shoot left/right - Change the arrow to go hit/stand
+[*]Bomb - Trigger the action selected by the arrow
+[*]Drop - Leave the menu
+[/list]
+[b]Payouts:[/b]
+[list]
+[*]40% - 1 &quot;Special&quot; card which is basically just a playing card.
+[*]20% - 2 Random cards
+[*]15% - 1 Lucky penny &amp; 2 normal pennies
+[*]10% -  2 Keys &amp; 2 bombs
+[*]5% - 1 Dime
+[*]4% - 1 Random item from the claw machine item pool
+[*]3% - 1 Chest
+[*]2% - 1 Random Trinket
+[*]1% - Destruction of the beggar
+[/list]
 
-Payouts:
-40% - 1 &quot;Special&quot; card which is basically just a playing card.
-20% - 2 Random cards
-15% - 1 Lucky penny &amp; 2 normal pennies
-10% -  2 Keys &amp; 2 bombs
-5% - 1 Dime
-3% - 1 Random item from the claw machine item pool
-3% - 1 Chest
-2% - 1 Random Trinket
-1% - Destruction of the beggar
+The beggar/dealer npc's type is 6 and the variant is 72, so you can spawn it with [code] spawn 6.72 [/code]
 
-Known bugs:
-Max amount of cards is 7 before they start getting off the paper
+[b]Possible future additions:[/b]
+Increase the max amount of cards, so that they don't get off the paper after more than 7 cards
 
-Thanks to Discowy 2.0 for the help with sprites and balancing.</description>
-    <version>1.2</version>
+Thanks to Discowy 2.0 for the help with sprites and balancing.
+
+You can check this mod's github page [url=https://github.com/ddeeddii/tboi_blackjack_dealer] here [/url]</description>
+    <version>1.3</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Familiars"/>
