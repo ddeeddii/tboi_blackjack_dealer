@@ -7,7 +7,7 @@
 
 This mod adds a blackjack dealer beggar to [b]arcade rooms[/b].
 
-The spawn chance is 50% to replace any machine, beggar or shell game in an arcade room.
+The default spawn chance is 50% (although you can use [b]Mod Config Menu[/b] to change it) to replace any machine, beggar or shell game in an arcade room.
 
 To play blackjack - you simply walk up to him. One game costs [b]5 cents[/b]. If you win, you get your coins back on top of the reward.
 
@@ -37,10 +37,10 @@ The beggar/dealer npc's type is 6 and the variant is 72, so you can spawn it wit
 [b]Possible future additions:[/b]
 Increase the max amount of cards, so that they don't get off the paper after more than 7 cards
 
-Thanks to Discowy 2.0 for the help with sprites and balancing.
+Thanks to Discowy 2.0 for the help with sprites and balancing. 
 
-You can check this mod's github page [url=https://github.com/ddeeddii/tboi_blackjack_dealer] here [/url]</description>
-    <version>1.3</version>
+You can check this mod's github repo [url=https://github.com/ddeeddii/tboi_blackjack_dealer] here [/url]</description>
+    <version>1.4</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Familiars"/>
