@@ -4,6 +4,9 @@ local blackjackDealerMod = RegisterMod("Blackjack Dealer", 1)
 
 local game = Game()
 
+-- CHANGE THIS ONE TO EITHER "true" IF YOU WANT LOGS ENABLED OR "false" IF YOU WANT LOGS DISABLED
+local enableLogs = true
+
 local playerHand
 local dealerHand
 local deck = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
@@ -42,6 +45,12 @@ local startRng
 local bjDealerSpawnChance 
 
 
+--- log stuff
+local amountGamesPlayed
+local amountTimesHit
+local amountTimesStood
+local amountWins
+
 local f = Font()
 f:Load("font/Upheaval.fnt")
 
@@ -52,8 +61,7 @@ local function playSound(soundName) -- PlaySound() "hack"
 end 
 
 local function bjPrint(text)
-    Isaac.DebugString("BJ| " .. tostring(text))
-    print("BJ| " .. tostring(text))
+    Isaac.DebugString(game:GetFrameCount() .. " BJ| " .. tostring(text))
 end
 
 local function randomObjFromTable(table)
@@ -109,11 +117,21 @@ local function hit(hand)
     return hand
 end
 
-local function getTotalInHand(hand)
+local function getTotalInHand(hand, log, logReason)
     local total = 0
 
+    if log and enableLogs and logReason ~= nil then
+        bjPrint("TOTAL | ====== New total eval started ======")
+        bjPrint("TOTAL |    Reason: " .. logReason)
+    end
+
     if hand == dealerHand and dealerCardRevealed == false then
-        local card = dealerHand[1]
+
+        if log and enableLogs then
+            bjPrint("TOTAL |    Dealer hand, card not revealed! ")
+        end
+
+        local card = dealerHand[1]        
         if card == "J" or card == "Q" or card == "K" or card == "A" then
             if card == "A" then
                 if total >= 11 then
@@ -130,29 +148,71 @@ local function getTotalInHand(hand)
         end
 
         return total     
+
     else
+    
+        if log and enableLogs then
+            bjPrint("TOTAL |    Dealer hand w. card or / player hand ")
+        end
+
         for i, card in pairs(hand) do
 
+            if log and enableLogs then
+                bjPrint("TOTAL |   -- NEW CARD --")
+                bjPrint("TOTAL |       Current total: " .. total)
+                bjPrint("TOTAL |       Card: " .. card)
+            end
+    
             -- bjPrint(card)
             if card == "J" or card == "Q" or card == "K" or card == "A" then
-                -- bjPrint("card delcared as special")
+
+                if log and enableLogs then
+                    bjPrint("TOTAL |         Card declared as special")
+                end
+        
                 if card == "A" then
-                    -- bjPrint("card declared as ace")
+
+                    if log and enableLogs then
+                        bjPrint("TOTAL |         Card declared as ace")
+                    end
+            
                     if total >= 11 then
-                        -- bjPrint("ace adds 1")
+
+                        if log and enableLogs then
+                            bjPrint("TOTAL |         Ace adds 1 ")
+                        end
+                
                         total = total + 1
                     else
-                        -- bjPrint("ace adds 11")
+                        
+                        if log and enableLogs then
+                            bjPrint("TOTAL |         Ace adds 11")
+                        end
+                
                         total = total + 11
                     end                
                 else
-                    -- bjPrint("special card adds 10")
+                    
+                    if log and enableLogs then
+                        bjPrint("TOTAL |         Special card adds 10 ")
+                    end
+            
                     total = total + 10
                 end
             elseif card ~= "J" or card ~= "Q" or card ~= "K" or card ~= "A" then
-                -- bjPrint("card declared as non-special")
+
+                if log and enableLogs then
+                    bjPrint("TOTAL |         Card declared as not special")
+                end
+        
                 total = total + card
             end   
+        end
+
+        if log and enableLogs then
+            bjPrint("TOTAL | Eval finished")
+            bjPrint("TOTAL | Final total: " .. total)
+            bjPrint(" ")
         end
 
         return total
@@ -209,8 +269,8 @@ local function declareWinner(playerHand, dealerHand)
         -- bjPrint("Push! (Both have the same card values!)")
         -- print("Push! (Both have the same card values!)")
     else
-        bjPrint("Something weird has happened in the Blackjack Dealer mod. Please report this to the mod developer if you can")
-        bjPrint("Details: DeclareWinner didnt find a win condition.")
+        bjPrint("ERR | Something weird has happened in the Blackjack Dealer mod. Please report this to the mod developer if you can")
+        bjPrint("ERR | Details: DeclareWinner didnt find a win condition.")
     end
 
     if finishGame == false then
@@ -243,6 +303,10 @@ end
 
 function blackjackDealerMod:OnGameStart(isSave)
 
+    if enableLogs then
+        bjPrint("EVENT | New run started / continued, all values reset!")
+    end
+
     if blackjackDealerMod:HasData() == false then
         bjDealerSpawnChance = 50
     else
@@ -256,6 +320,12 @@ function blackjackDealerMod:OnGameStart(isSave)
     wasTouched = false
     gameWon = false
     startRng = nil
+
+    amountGamesPlayed = 0
+    amountTimesHit = 0
+    amountTimesStood = 0
+    amountWins = 0
+    amountLosses = 0
 
     local startseed = game:GetSeeds():GetStartSeed()
     startRng = RNG()
@@ -285,6 +355,10 @@ function blackjackDealerMod:onRender()
         if displayMenu then
             if finishGame and declareWinner(playerHand, dealerHand) == "player" then
                 gameWon = true
+                if enableLogs then 
+                    amountWins = amountWins + 1
+                    bjPrint("EVENT | Player won, Amount of wins: " .. amountWins)
+                end
             end
             resetGame()
         end
@@ -308,7 +382,12 @@ function blackjackDealerMod:onRender()
             playerHand = deal(deck)
             dealerHand = deal(deck)
 
-            if getTotalInHand(playerHand) == 21 or getTotalInHand(dealerHand) == 21 then -- Player or dealer has Blackjack
+            if enableLogs then
+                amountGamesPlayed = amountGamesPlayed + 1
+                bjPrint("EVENT | New game started, Amount of games played: " .. amountGamesPlayed)
+            end
+
+            if getTotalInHand(playerHand, true, "check player hand after start") == 21 or getTotalInHand(dealerHand, true, "check dealer hand after start") == 21 then -- Player or dealer has Blackjack
                 finishGame = true
             end
         end
@@ -472,9 +551,13 @@ function blackjackDealerMod:onRender()
         if Input.IsActionTriggered(ButtonAction.ACTION_BOMB, 0) and arrowPos == 1 and lockControl == false then -- Hit / stand
             hit(playerHand)
             hitAmount = hitAmount + 1
+            if enableLogs then
+                amountTimesHit = amountTimesHit + 1
+                bjPrint("EVENT | Player hit, Amount of times hit: " .. amountTimesHit)
+            end
             playSound(SoundEffect.SOUND_PAPER_OUT)
 
-            if getTotalInHand(playerHand) >= 21 then
+            if getTotalInHand(playerHand, true, "check player hand after hit") >= 21 then
                 finishGame = true
             end
 
@@ -483,6 +566,10 @@ function blackjackDealerMod:onRender()
             standTime = game:GetFrameCount()
             doStand = true
             lockControl = true
+            if enableLogs then
+                amountTimesStood = amountTimesStood + 1
+                bjPrint("EVENT | Player stood, Stand amount: " .. amountTimesStood)
+            end
             -- bjPrint("1) Standing, controls: " ..  tostring(lockControl) .. " ; dostand: " .. tostring(doStand) .. " ; standtime: " .. tostring(standTime) )
         end
 
@@ -508,7 +595,7 @@ function blackjackDealerMod:onRender()
 
                     -- bjPrint("6) Hit, hit count: " .. dealerHitAmount .. " Card 3: " .. tostring(dealerHand[3]) .. " | Card 4: " .. tostring(dealerHand[4]) .. " | Card 5: " .. tostring(dealerHand[5]) .. " | Card 6: " .. tostring(dealerHand[6]))
 
-                    if getTotalInHand(dealerHand) > 21 then
+                    if getTotalInHand(dealerHand, true, "check if dealer hand bust when standing") > 21 then
                         -- bjPrint("7) Dealer bust")
                         doStand = false
                         finishGame = true
@@ -754,3 +841,5 @@ if ModConfigMenu then -- Mod config menu support
 		}
 	})
 end
+
+bjPrint("Blackjack dealer mod initialized. Version 1.4 ")
