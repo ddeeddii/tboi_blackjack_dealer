@@ -37,10 +37,14 @@ The beggar/dealer npc's type is 6 and the variant is 72, so you can spawn it wit
 [b]Possible future additions:[/b]
 Increase the max amount of cards, so that they don't get off the paper after more than 7 cards
 
-Thanks to Discowy 2.0 for the help with sprites and balancing. 
+[b] Bug notice: [/b]
+Sometimes when the player/dealer hits the card isn't added but the sound plays. Also sometimes the dealer's hidden card isn't shown. 
+I have no clue what causes these bugs, however [b]I believe they're completely harmless and don't substancially affect gameplay[b].
+
+Thanks to Discowy 2.0 for the help with sprites and balancing.
 
 You can check this mod's github repo [url=https://github.com/ddeeddii/tboi_blackjack_dealer] here [/url]</description>
-    <version>1.4</version>
+    <version>1.5</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Familiars"/>

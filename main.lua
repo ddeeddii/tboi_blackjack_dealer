@@ -4,8 +4,17 @@ local blackjackDealerMod = RegisterMod("Blackjack Dealer", 1)
 
 local game = Game()
 
--- CHANGE THIS ONE TO EITHER "true" IF YOU WANT LOGS ENABLED OR "false" IF YOU WANT LOGS DISABLED
-local enableLogs = true
+--[[
+    Welcome to the blackjack dealer mod!
+    This code is quite a mess, also probably unoptimized much
+    But - it works.
+
+    If you're here to reference/copy code, feel free to do so.
+--]]
+
+
+-- Don't change this unles you want your logs flooded with debug stuff and statistics
+local enableLogs = false
 
 local playerHand
 local dealerHand
@@ -42,8 +51,8 @@ local specialCards = {Card.CARD_CLUBS_2, Card.CARD_DIAMONDS_2, Card.CARD_SPADES_
 
 local startRng
 
+-- Mod config menu configurables
 local bjDealerSpawnChance 
-
 
 --- log stuff
 local amountGamesPlayed
@@ -62,6 +71,7 @@ end
 
 local function bjPrint(text)
     Isaac.DebugString(game:GetFrameCount() .. " BJ| " .. tostring(text))
+    -- print("BJ| " .. tostring(text))
 end
 
 local function randomObjFromTable(table)
@@ -81,6 +91,18 @@ local function shuffle(tbl) -- Credit: https://gist.github.com/Uradamus/10323382
     end
     return tbl
     end
+
+    
+
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end    
 
 -- Blackjack base implementation, heavily "inspired" by https://gist.github.com/mjhea0/5680216
 local function deal(deck)
@@ -117,103 +139,175 @@ local function hit(hand)
     return hand
 end
 
+local function checkAces(hand, total, log) -- Check for soft aces
+
+    if enableLogs == false then
+        log = false
+    end
+
+    if log then
+        bjPrint("ACE | Ace eval started")
+    end
+
+    local softAce = false
+    local aceValue = 0
+
+    if total + 11 > 21 then
+        softAce = true
+        if log then bjPrint("ACE | Ace is soft, " .. total + 11) end
+    else
+        if log then bjPrint("ACE | Ace is NOT soft, " .. total + 11) end
+    end
+
+    for i, card in pairs(hand) do
+        if log then bjPrint("ACE | Card isnt ace") end
+         if card == "A" then
+            if log then bjPrint("ACE | Card is ace") end
+
+            if softAce and not has_value(hand, "sA") then
+                aceValue = aceValue + 1
+                hand[i] = "sA"
+                if log then bjPrint("ACE | Ace more than and declared soft") end
+            elseif total < 11 then
+                aceValue = aceValue + 11
+                -- hand[i] = "hA"
+                if log then bjPrint("ACE | Ace less than 11") end
+            else
+                aceValue = aceValue + 1
+                -- hand[i] = "hA"
+                if log then bjPrint("ACE | Ace more than 11") end
+            end
+
+            if card == "sA" then
+                if log then bjPrint("ACE | Soft ace") end
+            elseif card == "hA" then
+                if log then bjPrint("ACE | Hard ace") end
+            end
+        end   
+
+    end
+
+    if log then bjPrint("final aceval: " .. aceValue) end
+    return aceValue
+
+end
+
 local function getTotalInHand(hand, log, logReason)
     local total = 0
+
+    if enableLogs == false then
+        log = false
+    end
 
     if log and enableLogs and logReason ~= nil then
         bjPrint("TOTAL | ====== New total eval started ======")
         bjPrint("TOTAL |    Reason: " .. logReason)
+        bjPrint("TOTAL |    " .. tostring(hand[1]) .. " " .. tostring(hand[2])  .. " " .. tostring(hand[3])  .. " " .. tostring(hand[4]) .. " " .. tostring(hand[5]))
     end
 
     if hand == dealerHand and dealerCardRevealed == false then
+
+        -- DELAER HAND ONLY!
 
         if log and enableLogs then
             bjPrint("TOTAL |    Dealer hand, card not revealed! ")
         end
 
-        local card = dealerHand[1]        
-        if card == "J" or card == "Q" or card == "K" or card == "A" then
-            if card == "A" then
-                if total >= 11 then
-                    total = total + 1
-                else
-                    total = total + 11
-                end                
-            else
-                total = total + 10
-            end
+        local card = hand[1]
 
-        elseif card ~= "J" or card ~= "Q" or card ~= "K" or card ~= "A" then
-            total = total + card
+        if log then bjPrint("TOTAL | Starting evaluation of non-aces, current total: " .. total) end
+
+        if log and enableLogs then
+            bjPrint("TOTAL |     -- NEW CARD --")
+            bjPrint("TOTAL |     Current total: " .. total)
+            bjPrint("TOTAL |    Card: " .. card)
         end
 
-        return total     
+        if card == "J" or card == "Q" or card == "K" then           
+            total = total + 10
+        end
 
+        if card ~= "J" and card ~= "Q" and card ~= "K" and card ~= "A" and card ~= "sA" and card ~= "hA" then
+            total = total + card
+        end   
+
+
+        if log then bjPrint("TOTAL |    Starting checkAces: " .. total) end
+        if has_value(hand, "A") and not has_value(hand, "sA") then
+            checkAces(hand, total, log)
+            if log then bjPrint("TOTAL |Checkaces finished.") end
+        end
+
+        if log then bjPrint("TOTAL |    Starting Ace eval, total: " .. total) end
+
+        if card == "sA" or card == "A" then
+            if log then bjPrint("TOTAL |       sA and hA eval started") end
+            if card == "sA" then
+                if log then bjPrint("TOTAL |       sA adds 1, card: " .. card) end
+                total = total + 1
+            elseif card == "A" and total < 11 then
+                if log then bjPrint("TOTAL |       hA, adds 11, card: " .. card) end
+                total = total + 11
+            else
+                if log then bjPrint("TOTAL |       x adds 1, card: " .. card) end
+                total = total + 1
+            end
+        end
+
+        if log then bjPrint("TOTAL |    Eval ended, total: " .. total) end
+
+        return total
+
+        -- DEALER HAND ONLY
     else
     
-        if log and enableLogs then
-            bjPrint("TOTAL |    Dealer hand w. card or / player hand ")
-        end
+        if log and enableLogs then bjPrint("TOTAL |    Dealer hand w. card or / player hand ") end
 
+        if log then bjPrint("TOTAL | Starting evaluation of non-aces, current total: " .. total) end
         for i, card in pairs(hand) do
 
             if log and enableLogs then
-                bjPrint("TOTAL |   -- NEW CARD --")
-                bjPrint("TOTAL |       Current total: " .. total)
-                bjPrint("TOTAL |       Card: " .. card)
+                bjPrint("TOTAL |     -- NEW CARD --")
+                bjPrint("TOTAL |     Current total: " .. total)
+                bjPrint("TOTAL |    Card: " .. card)
             end
-    
-            -- bjPrint(card)
-            if card == "J" or card == "Q" or card == "K" or card == "A" then
 
-                if log and enableLogs then
-                    bjPrint("TOTAL |         Card declared as special")
-                end
-        
-                if card == "A" then
+            if card == "J" or card == "Q" or card == "K" then           
+                total = total + 10
+            end
 
-                    if log and enableLogs then
-                        bjPrint("TOTAL |         Card declared as ace")
-                    end
-            
-                    if total >= 11 then
-
-                        if log and enableLogs then
-                            bjPrint("TOTAL |         Ace adds 1 ")
-                        end
-                
-                        total = total + 1
-                    else
-                        
-                        if log and enableLogs then
-                            bjPrint("TOTAL |         Ace adds 11")
-                        end
-                
-                        total = total + 11
-                    end                
-                else
-                    
-                    if log and enableLogs then
-                        bjPrint("TOTAL |         Special card adds 10 ")
-                    end
-            
-                    total = total + 10
-                end
-            elseif card ~= "J" or card ~= "Q" or card ~= "K" or card ~= "A" then
-
-                if log and enableLogs then
-                    bjPrint("TOTAL |         Card declared as not special")
-                end
-        
+            if card ~= "J" and card ~= "Q" and card ~= "K" and card ~= "A" and card ~= "sA" and card ~= "hA" then
                 total = total + card
             end   
+
         end
 
-        if log and enableLogs then
-            bjPrint("TOTAL | Eval finished")
-            bjPrint("TOTAL | Final total: " .. total)
-            bjPrint(" ")
+        if log then bjPrint("TOTAL |    Starting checkAces: " .. total) end
+        if has_value(hand, "A") and not has_value(hand, "sA") then
+            checkAces(hand, total, log)
+            if log then bjPrint("TOTAL |Checkaces finished.") end
         end
+
+        if log then bjPrint("TOTAL |    Starting Ace eval, total: " .. total) end
+        for i, card in pairs(hand) do
+
+            if card == "sA" or card == "A" then
+                if log then bjPrint("TOTAL |       sA and hA eval started") end
+                if card == "sA" then
+                    if log then bjPrint("TOTAL |       sA adds 1, card: " .. card) end
+                    total = total + 1
+                elseif card == "A" and total < 11 then
+                    if log then bjPrint("TOTAL |       hA, adds 11, card: " .. card) end
+                    total = total + 11
+                else
+                    if log then bjPrint("TOTAL |       x adds 1, card: " .. card) end
+                    total = total + 1
+                end
+            end
+
+        end
+
+        if log then bjPrint("TOTAL |    Eval ended, total: " .. total) end
 
         return total
     end
@@ -384,7 +478,7 @@ function blackjackDealerMod:onRender()
 
             if enableLogs then
                 amountGamesPlayed = amountGamesPlayed + 1
-                bjPrint("EVENT | New game started, Amount of games played: " .. amountGamesPlayed)
+                bjPrint("EVENT | ================--------- New game started, Amount of games played: " .. amountGamesPlayed .. " ---------================")
             end
 
             if getTotalInHand(playerHand, true, "check player hand after start") == 21 or getTotalInHand(dealerHand, true, "check dealer hand after start") == 21 then -- Player or dealer has Blackjack
@@ -529,14 +623,29 @@ function blackjackDealerMod:onRender()
 
         -- Dealer total:
         if dealerHand ~= nil then
-            f:DrawString("Total: ", 80, 62, KColor(0,0,0,1), 0, true)
-            f:DrawString(tostring(getTotalInHand(dealerHand)), 100, 78, KColor(0,0,0,1), 0, true)
+            if dealerCardRevealed then
+                if has_value(dealerHand, "A") and not has_value(dealerHand, "sA") then
+                    f:DrawString("Total: ", 80, 62, KColor(0,0,0,1), 0, true)
+                    f:DrawString("Soft " .. tostring(getTotalInHand(dealerHand)), 75, 78, KColor(0,0,0,1), 78, true)
+                else
+                    f:DrawString("Total: ", 80, 62, KColor(0,0,0,1), 0, true)
+                    f:DrawString(tostring(getTotalInHand(dealerHand)), 75, 78, KColor(0,0,0,1), 78, true)
+                end
+            else
+                f:DrawString("Total: ", 80, 62, KColor(0,0,0,1), 0, true)
+                f:DrawString(tostring(getTotalInHand(dealerHand)), 75, 78, KColor(0,0,0,1), 78, true)
+            end
         end
 
         -- Player total:
         if playerHand ~= nil then
-            f:DrawString("Total: ", 80, 151, KColor(0,0,0,1), 0, true)
-            f:DrawString(tostring(getTotalInHand(playerHand)), 100, 167, KColor(0,0,0,1), 0, true)
+            if has_value(playerHand, "A") and not has_value(playerHand, "sA") then
+                f:DrawString("Total: ", 80, 151, KColor(0,0,0,1), 0, true)
+                f:DrawString("Soft " .. tostring(getTotalInHand(playerHand)), 75, 167, KColor(0,0,0,1), 78, true)
+            else
+                f:DrawString("Total: ", 80, 151, KColor(0,0,0,1), 0, true)
+                f:DrawString(tostring(getTotalInHand(playerHand)), 75, 167, KColor(0,0,0,1), 78, true)
+            end
         end
 
         f:DrawString("Hit", 105, 195, KColor(0,0,0,1), 0, true)
@@ -679,11 +788,15 @@ function blackjackDealerMod:update(player)
             end
         end
 
-        if (bjEnt.Position - player.Position):Length() > 25 then
+        if (bjEnt.Position - player.Position):Length() > 20 then
             wasTouched = false
         end
 
-        if (bjEnt.Position - player.Position):Length() <= 25 and wasTouched == false then -- Collision
+        if (bjEnt.Position - player.Position):Length() <= 20 and wasTouched == false then -- Collision
+            if bjSprite:GetAnimation() ~= "Idle" then
+                return nil
+            end
+
             wasTouched = true
             if player:GetNumCoins() >= 5 then
                 player:AddCoins(-5)
@@ -842,4 +955,5 @@ if ModConfigMenu then -- Mod config menu support
 	})
 end
 
-bjPrint("Blackjack dealer mod initialized. Version 1.4 ")
+print("Blackjack dealer mod initialized. Version 1.4")
+bjPrint("Blackjack dealer mod initialized. Version 1.4")
