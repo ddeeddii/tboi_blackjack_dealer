@@ -90,9 +90,8 @@ local function shuffle(tbl) -- Credit: https://gist.github.com/Uradamus/10323382
         tbl[i], tbl[j] = tbl[j], tbl[i]
     end
     return tbl
-    end
+end
 
-    
 
 local function has_value (tab, val)
     for index, value in ipairs(tab) do
@@ -444,6 +443,15 @@ function blackjackDealerMod:onRender()
     --     startRng:SetSeed(startseed, 0)
 
     -- end
+    if Input.IsButtonPressed(Keyboard.KEY_LEFT_SHIFT, 0) and Input.IsButtonPressed(Keyboard.KEY_B, 0) and Input.IsButtonPressed(Keyboard.KEY_J, 0) then 
+        displayMenu = false
+        for i=0, game:GetNumPlayers()-1 do
+            local player = Isaac.GetPlayer(i)
+            player.ControlsEnabled = true
+        end
+        resetGame()
+    end
+
 
     if Input.IsActionTriggered(ButtonAction.ACTION_DROP, 0) then
         if displayMenu then
@@ -955,5 +963,5 @@ if ModConfigMenu then -- Mod config menu support
 	})
 end
 
-print("Blackjack dealer mod initialized. Version 1.4")
-bjPrint("Blackjack dealer mod initialized. Version 1.4")
+print("Blackjack dealer mod initialized. Version 1.5")
+bjPrint("Blackjack dealer mod initialized. Version 1.5")
