@@ -60,6 +60,10 @@ local amountTimesHit
 local amountTimesStood
 local amountWins
 
+
+-- Player
+local menuPlayer
+
 local f = Font()
 f:Load("font/Upheaval.fnt")
 
@@ -328,6 +332,7 @@ local function resetGame()
     finishTime = nil
     displayMenu = false
     winnerGot = false
+    menuPlayer = nil
     deck = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
 end
 
@@ -443,6 +448,7 @@ function blackjackDealerMod:onRender()
     --     startRng:SetSeed(startseed, 0)
 
     -- end
+
     if Input.IsButtonPressed(Keyboard.KEY_LEFT_SHIFT, 0) and Input.IsButtonPressed(Keyboard.KEY_B, 0) and Input.IsButtonPressed(Keyboard.KEY_J, 0) then 
         displayMenu = false
         for i=0, game:GetNumPlayers()-1 do
@@ -452,8 +458,11 @@ function blackjackDealerMod:onRender()
         resetGame()
     end
 
+    if menuPlayer == nil then
+        menuPlayer = Isaac.GetPlayer(0)
+    end
 
-    if Input.IsActionTriggered(ButtonAction.ACTION_DROP, 0) then
+    if Input.IsActionTriggered(ButtonAction.ACTION_DROP, menuPlayer.ControllerIndex) then
         if displayMenu then
             if finishGame and declareWinner(playerHand, dealerHand) == "player" then
                 gameWon = true
@@ -494,9 +503,9 @@ function blackjackDealerMod:onRender()
             end
         end
 
-        if arrowPos == 1 and Input.IsActionTriggered(ButtonAction.ACTION_SHOOTRIGHT, 0) then
+        if arrowPos == 1 and Input.IsActionTriggered(ButtonAction.ACTION_SHOOTRIGHT, menuPlayer.ControllerIndex) then
             arrowPos = 2
-        elseif arrowPos == 2 and Input.IsActionTriggered(ButtonAction.ACTION_SHOOTLEFT, 0)  then
+        elseif arrowPos == 2 and Input.IsActionTriggered(ButtonAction.ACTION_SHOOTLEFT, menuPlayer.ControllerIndex)  then
             arrowPos = 1
         end
 
@@ -665,7 +674,7 @@ function blackjackDealerMod:onRender()
 
         -- print(screenPos)
 
-        if Input.IsActionTriggered(ButtonAction.ACTION_BOMB, 0) and arrowPos == 1 and lockControl == false then -- Hit / stand
+        if Input.IsActionTriggered(ButtonAction.ACTION_BOMB, menuPlayer.ControllerIndex) and arrowPos == 1 and lockControl == false then -- Hit / stand
             hit(playerHand)
             hitAmount = hitAmount + 1
             if enableLogs then
@@ -678,7 +687,7 @@ function blackjackDealerMod:onRender()
                 finishGame = true
             end
 
-        elseif Input.IsActionTriggered(ButtonAction.ACTION_BOMB, 0) and arrowPos == 2 and lockControl == false then
+        elseif Input.IsActionTriggered(ButtonAction.ACTION_BOMB, menuPlayer.ControllerIndex) and arrowPos == 2 and lockControl == false then
             -- print("--- You stand ---")
             standTime = game:GetFrameCount()
             doStand = true
@@ -809,6 +818,7 @@ function blackjackDealerMod:update(player)
             if player:GetNumCoins() >= 5 then
                 player:AddCoins(-5)
                 bjSprite:Play("PayPrize", false)
+                menuPlayer = player
             end
         end 
 
@@ -880,6 +890,7 @@ function blackjackDealerMod:update(player)
                 bjSprite:SetAnimation("Idle", true)
                 bjSprite:SetFrame(1)
                 gameWon = false
+                menuPlayer = nil
             end
         end
 
@@ -963,5 +974,5 @@ if ModConfigMenu then -- Mod config menu support
 	})
 end
 
-print("Blackjack dealer mod initialized. Version 1.5")
-bjPrint("Blackjack dealer mod initialized. Version 1.5")
+print("Blackjack dealer mod initialized. Version 1.6")
+bjPrint("Blackjack dealer mod initialized. Version 1.6")

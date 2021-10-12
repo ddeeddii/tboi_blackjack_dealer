@@ -44,7 +44,7 @@ I have no clue what causes these bugs, however [b]I believe they're completely h
 Thanks to Discowy 2.0 for the help with sprites and balancing.
 
 You can check this mod's github repo [url=https://github.com/ddeeddii/tboi_blackjack_dealer] here [/url]</description>
-    <version>1.5</version>
+    <version>1.6</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Familiars"/>
