@@ -323,8 +323,6 @@ local function getTotalInHand(hand, log, logReason)
     end
 end
 
--- christ almighty
--- TODO: fix ''this''
 local function resetGame()
     pData.hitAmount = 0
     gData.dealerHitAmount = 0
@@ -459,7 +457,6 @@ local function getResultByChance(rng, ...)
     return matchedRng
 end
 
--- TODO: fix save data
 function blackjackDealerMod:OnGameStart(isSave)
 
     if enableLogs then
@@ -524,8 +521,6 @@ function blackjackDealerMod:onRender()
         end
     end
 
-    -- TODO: local var to ent data
-    -- also get ent & player
     if not gData.displayMenu then return end
 
     if gData.controlsDisabledMenu == nil then -- Handle control enable / disable
@@ -609,7 +604,6 @@ function blackjackDealerMod:onRender()
         end
 
     end
-
 
     -- Player hand
     if hands.player ~= nil then
@@ -741,7 +735,6 @@ local function removeBd(ent)
     return nil, nil, nil
 end
 
--- TODO: assign vars to ent data
 function blackjackDealerMod:update(player)
 
     local bdEnt = getBdEnt(player)
@@ -799,41 +792,40 @@ function blackjackDealerMod:update(player)
 
             local rewardSeedRng = bRng:RandomInt(1000)
 
-            Isaac.DebugString("rolling!")
             local reward = getResultByChance(bRng, 40, 20, 15, 10, 5, 3, 1, 2, 4)
-            Isaac.DebugString("i did it")
+            local freePos =  Isaac.GetFreeNearPosition(bdPos, 50)
 
             if reward == 1 then
                 local card = specialCards[randint(bRng, 1, #specialCards)]
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, card, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, card, freePos, vz, bdEnt)
             elseif reward == 2 then
                 local card = game:GetItemPool():GetCard(rewardSeedRng, true, true, false)
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, card, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, card, freePos, vz, bdEnt)
                 
                 local card = game:GetItemPool():GetCard(rewardSeedRng+1, true, true, false)
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, card, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, card, freePos, vz, bdEnt)
             elseif reward == 3 then
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY, freePos, vz, bdEnt)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY, freePos, vz, bdEnt)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY, freePos, vz, bdEnt)
             elseif reward == 4 then
                 for i = 0, 1 do
-                    Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, BombSubType.BOMB_NORMAL, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
-                    Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_KEY, KeySubType.KEY_NORMAL, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
+                    Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, BombSubType.BOMB_NORMAL, freePos, vz, bdEnt)
+                    Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_KEY, KeySubType.KEY_NORMAL, freePos, vz, bdEnt)
                 end
             elseif reward == 5 then
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_DIME, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_DIME, freePos, vz, bdEnt)
             elseif reward == 6 then
                 local rewardItem = game:GetItemPool():GetCollectible(ItemPoolType.POOL_CRANE_GAME, true, rewardSeedRng, 0)
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, rewardItem, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, rewardItem, freePos, vz, bdEnt)
             elseif reward == 7 then
                 bdEnt, bdPos, bdSprite = removeBd(bdEnt)
                 return
             elseif reward == 8 then
                 local rewardTrinket = game:GetItemPool():GetTrinket(false)
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, rewardTrinket, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, rewardTrinket, freePos, vz, bdEnt)
             elseif reward == 9 then
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_CHEST, 1, Isaac.GetFreeNearPosition(bdPos, 50), Vector(0, 0), bdEnt)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_CHEST, 1, freePos, vz, bdEnt)
             end
 
         end
@@ -872,7 +864,7 @@ function blackjackDealerMod:newRoom()
             local num_viable_slots = #viable_slots
 			if num_viable_slots > 0 then
 				local slot = viable_slots[rng:RandomInt(num_viable_slots) + 1]
-				Isaac.Spawn(entData.type, entData.var, 0, slot.Position, Vector(0, 0), nil)
+				Isaac.Spawn(entData.type, entData.var, 0, slot.Position, vz, nil)
 				slot:Remove()
 			end
 
