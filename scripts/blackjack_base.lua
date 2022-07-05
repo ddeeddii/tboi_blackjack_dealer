@@ -1,12 +1,9 @@
 local bj = {}
 local hf = require('scripts.helpers')
 
-local deck = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
---                                         J   Q   K   A                             J   Q   K   A                                 J   Q   K   A                              J   Q   K   A
-
 function bj.newDeck()
-    deck = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
-    hf.shuffle(deck)
+    BDMod.deck = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
+    hf.shuffle(BDMod.deck)
     BDMod.data.printDeckInfo = true
     BDMod.data.closeDeckInfoIn = game:GetFrameCount() + 60
 end
@@ -15,13 +12,13 @@ end
 function bj.deal()
     local hand = {}
 
-    if next(deck) == nil then -- if deck is empty
+    if next(BDMod.deck) == nil then -- if deck is empty
         bj.newDeck()
     end
 
-    hf.shuffle(deck)
+    hf.shuffle(BDMod.deck)
     for i = 0, 1 do
-        local card = table.remove(deck, 1)
+        local card = table.remove(BDMod.deck, 1)
         if card == 11 then
             card = "J"
         elseif card == 12 then
@@ -37,11 +34,11 @@ function bj.deal()
 end
 
 function bj.hit(hand)
-    if next(deck) == nil then -- if deck is empty
+    if next(BDMod.deck) == nil then -- if BDMod.deck is empty
         bj.newDeck()
     end
 
-    local card = table.remove(deck, 1)
+    local card = table.remove(BDMod.deck, 1)
     if card == 11 then
         card = "J"
     elseif card == 12 then

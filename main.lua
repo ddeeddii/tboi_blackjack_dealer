@@ -1,7 +1,6 @@
 BDMod = RegisterMod("Blackjack Dealer", 1)
 local json = require("json")
 
-
 local hf = require('scripts.helpers')
 local bj = require('scripts.blackjack_base')
 
@@ -40,6 +39,10 @@ BDMod.data = {
     declareBet = nil,
 }
 
+BDMod.deck = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
+--                                         J   Q   K   A                             J   Q   K   A                                 J   Q   K   A                              J   Q   K   A
+
+
 local entData = {
     flags = EntityFlag.FLAG_NO_TARGET | EntityFlag.FLAG_NO_STATUS_EFFECTS,
     type = Isaac.GetEntityTypeByName("Blackjack Dealer"),
@@ -64,6 +67,37 @@ local initTrueGame
 local f = Font()
 f:Load("font/Upheaval.fnt")
 
+-- Mod Data
+local function saveModData()
+    local jsonData = json.encode(saveData)
+    BDMod:SaveData(jsonData)
+end
+
+local function defaultModData()
+    saveData.bdSpawnChance = 50
+    saveData.dealerHitMax = 17
+    saveData.displayCardAmt = false
+    saveData.lockToArcade = true
+    saveModData()
+end
+
+local function loadModData()
+    if BDMod:HasData() then
+        local data = json.decode(BDMod:LoadData())
+
+        -- Ensure old data gets fixed
+        if data.dealerHitMax == nil then
+            defaultModData()
+            return
+        end
+
+        saveData = data
+    else
+        defaultModData()
+    end
+end
+
+loadModData()
 
 local function getBdEnt(player)
     local possibleEnts = Isaac.FindByType(6, 72)
@@ -155,12 +189,6 @@ function BDMod:OnGameStart(isSave)
 
     if BDMod then
         hf.bdLog("EVENT | New run started / continued, all values reset!")
-    end
-
-    if not BDMod:HasData() then
-        saveData.bdSpawnChance = 50
-    else
-        saveData.bdSpawnChance = json.decode(BDMod:LoadData()).bdSpawnChance
     end
 
     bj.resetGame()
@@ -255,14 +283,8 @@ local function betRender()
     local cIndex = BDMod.data.menuPlayer.ControllerIndex
     handleChangingArrowPos(cIndex)
 
-    -- local mousePos = Input.GetMousePosition(true) -- get mouse position in world coordinates
-    -- local screenPos = Isaac.WorldToScreen(mousePos) -- transfer game- to screen coordinates
-    -- print(screenPos.X .. " " .. screenPos.Y)
-
     smallPaperBg:Render(Vector(240, 135), vz, vz)
     f:DrawString("Choose bet", 170, 95, KColor(0,0,0,1), 140, true)
-
-    -- Isaac.RenderText(".", screenPos.X, screenPos.Y, 1 ,1 ,1 ,1 )
 
     -- Top Left (1c)
     pennySprite:Render(Vector(200, 125))
@@ -463,8 +485,16 @@ function BDMod:onRender()
 
     f:DrawString("Hit", 105, 195, KColor(0,0,0,1), 0, true)
     f:DrawString("Stand", 305, 195 ,KColor(0,0,0,1), 0, true)
-    f:DrawString("Dealer's hand", 125, 40, KColor(0,0,0,1), 231, true)
-    f:DrawString("Your hand", 75, 128, KColor(0,0,0,1), 0331, true)
+    if saveData.displayCardAmt then
+        f:DrawString("Dealer's hand", 125, 40, KColor(0,0,0,1), 130, true)
+        -- Render # of cards in deck
+        f:DrawString("Cards: " .. #BDMod.deck, 300, 40, KColor(0,0,0,1), 100, true)
+    else
+        f:DrawString("Dealer's hand", 125, 40, KColor(0,0,0,1), 231, true)
+    end
+    f:DrawString("Your hand", 75, 128, KColor(0,0,0,1), 331, true)
+
+
 
     if Input.IsActionTriggered(ButtonAction.ACTION_BOMB, cIndex) and BDMod.data.arrowPos == 1 and not BDMod.data.lockControl then -- hit / stand
         bj.hit(BDMod.hands.player)
@@ -491,6 +521,12 @@ function BDMod:onRender()
         -- hf.bdLog("1) Standing, controls: " ..  tostring(BDMod.data.lockControl) .. " ; BDMod.data.doStand: " .. tostring(BDMod.data.doStand) .. " ; BDMod.data.standTime: " .. tostring(BDMod.data.standTime) )
     end
 
+    -- local mousePos = Input.GetMousePosition(true) -- get mouse position in world coordinates
+    -- local screenPos = Isaac.WorldToScreen(mousePos) -- transfer game- to screen coordinates
+    -- print(screenPos.X .. " " .. screenPos.Y)
+    -- Isaac.RenderText(".", screenPos.X, screenPos.Y, 1 ,1 ,1 ,1 )
+
+
     if BDMod.data.doStand then
         if BDMod.data.dealerCardRevealed == false and game:GetFrameCount() >= BDMod.data.standTime + 60 then
             BDMod.data.dealerCardRevealed = true
@@ -498,7 +534,7 @@ function BDMod:onRender()
             BDMod.data.standTime = game:GetFrameCount()
         end
 
-        if bj.getTotalInHand(BDMod.hands.dealer) < 17 then
+        if bj.getTotalInHand(BDMod.hands.dealer) < saveData.dealerHitMax then
             if game:GetFrameCount() >= BDMod.data.standTime + 60 then
                 bj.hit(BDMod.hands.dealer)
                 BDMod.data.dealerHitAmount = BDMod.data.dealerHitAmount + 1
@@ -511,6 +547,7 @@ function BDMod:onRender()
                 BDMod.data.standTime = game:GetFrameCount()
             end
         else
+            BDMod.data.dealerCardRevealed = true
             BDMod.data.doStand = false
             BDMod.data.finishGame = true
             return nil
@@ -668,7 +705,8 @@ function BDMod:newRoom()
     local room = game:GetRoom()
     local level = game:GetLevel()
 
-    if room:GetType() == RoomType.ROOM_ARCADE and room:IsFirstVisit() then -- Credit to Sentinel and his Crane Machine mod for the code:
+    -- Credit to Sentinel and his Crane Machine mod for the code:
+    if room:GetType() == RoomType.ROOM_ARCADE and room:IsFirstVisit() or saveData.lockToArcade == false then 
         local stage = level:GetAbsoluteStage()
 		local seed = game:GetSeeds():GetStageSeed(stage)
 		local rng = RNG()
@@ -697,7 +735,7 @@ end
 BDMod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, BDMod.newRoom)
 
 if ModConfigMenu then -- Mod config menu support
-	ModConfigMenu.AddSetting("Blackjack Dealer",{ 
+	ModConfigMenu.AddSetting("Blackjack Dealer", "General", {
 		Type = ModConfigMenu.OptionType.NUMBER,
 
 		CurrentSetting = function()
@@ -705,24 +743,111 @@ if ModConfigMenu then -- Mod config menu support
 		end,
 
 		Display = function()
-			return "Blackjack Dealer spawn chance: " .. tostring(saveData.bdSpawnChance) .. "%"
+			return "Spawn Chance: " .. tostring(saveData.bdSpawnChance) .. "%"
 		end,
 
 		Minimum = 0,
-		Maximum = 99,
+		Maximum = 100,
 
 		OnChange = function(currentNum)
 			saveData.bdSpawnChance = currentNum
 
-            BDMod:SaveData(json.encode(saveData))
+            saveModData()
 		end,
 
 		Info = {
-			"Percentage chance for Blackjack Dealer",
-			"to spawn/replace a machine/beggar/shell game",
-            "inside of an arcade."
+            "Chance to replace a slot machine",
+            "Default: 50%"
 		}
 	})
+
+    ModConfigMenu.AddSetting("Blackjack Dealer", "General", {
+		Type = ModConfigMenu.OptionType.BOOLEAN,
+
+		CurrentSetting = function()
+			return saveData.lockToArcade
+		end,
+
+		Display = function()
+            local text
+            if saveData.lockToArcade then
+                text = "On"
+            elseif saveData.lockToArcade == false then
+                text = "Off"
+            else
+                text = "ERROR"
+            end
+			return "Lock spawns to arcade: " .. text
+		end,
+
+		OnChange = function(currentNum)
+			saveData.lockToArcade = currentNum
+
+            saveModData()
+		end,
+
+		Info = {
+			"When enabled, the dealer will only spawn in arcades. When disabled, chance to replace slots in general.",
+            "Default: On"
+		}
+	})
+
+    ModConfigMenu.AddSetting("Blackjack Dealer", "General", {
+		Type = ModConfigMenu.OptionType.NUMBER,
+
+		CurrentSetting = function()
+			return saveData.dealerHitMax
+		end,
+
+		Display = function()
+			return "Dealer must hit until: " .. saveData.dealerHitMax
+		end,
+
+
+		OnChange = function(currentNum)
+			saveData.dealerHitMax = currentNum
+
+            saveModData()
+		end,
+
+		Info = {
+            "Decides what total the dealer must reach before standing",
+            "Default: 17"
+		}
+    })
+
+    ModConfigMenu.AddSetting("Blackjack Dealer", "General", {
+		Type = ModConfigMenu.OptionType.BOOLEAN,
+
+		CurrentSetting = function()
+			return saveData.displayCardAmt
+		end,
+
+		Display = function()
+            local text
+            if saveData.displayCardAmt then
+                text = "On"
+            elseif saveData.displayCardAmt == false then
+                text = "Off"
+            else
+                text = "ERROR"
+            end
+
+			return "Display card amount: " .. text
+		end,
+
+
+		OnChange = function(currentNum)
+			saveData.displayCardAmt = currentNum
+
+            saveModData()
+		end,
+
+		Info = {
+            "When enabled will display the number of cards left in the deck",
+            "Default: Off"
+		}
+    })
 end
 
 hf.bdLog("Blackjack dealer mod initialized. Version 2.0")
