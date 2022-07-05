@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="09.09.2021 17:20:36" Version="2" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="03.07.2022 21:49:19" Version="10" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="paperbg.png" Id="0"/>
+			<Spritesheet Path="paper.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="root" Id="0" SpritesheetId="0"/>
@@ -17,7 +17,7 @@
 			</RootAnimation>
 			<LayerAnimations>
 				<LayerAnimation LayerId="0" Visible="true">
-					<Frame XPosition="0" YPosition="0" XPivot="16" YPivot="16" XCrop="0" YCrop="0" Width="128" Height="86" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+					<Frame XPosition="0" YPosition="0" XPivot="184" YPivot="116" XCrop="0" YCrop="0" Width="373" Height="233" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
 				</LayerAnimation>
 			</LayerAnimations>
 			<NullAnimations/>
