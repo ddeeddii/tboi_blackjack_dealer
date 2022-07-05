@@ -35,7 +35,9 @@ BDMod.data = {
     printDeckInfo = false,
     closeDeckInfoIn = 0,
     hitAmount = nil,
-    menuPlayer = nil
+    menuPlayer = nil,
+
+    declareBet = nil,
 }
 
 local entData = {
@@ -56,6 +58,8 @@ local amountGamesPlayed
 local amountTimesHit
 local amountTimesStood
 local amountWins
+
+local initTrueGame
 
 local f = Font()
 f:Load("font/Upheaval.fnt")
@@ -136,9 +140,14 @@ end
 local paperBg = Sprite()
 local arrowSprite = Sprite()
 
-local function initSprite(sprite, path)
+local smallPaperBg = Sprite()
+local pennySprite = Sprite()
+local nickelSprite = Sprite()
+
+local function initSprite(sprite, path, animation)
+    if animation == nil then animation = "main" end
     sprite:Load(path, true)
-    sprite:SetAnimation("main", true)
+    sprite:SetAnimation(animation, true)
     sprite:SetFrame(1)
 end
 
@@ -169,12 +178,132 @@ function BDMod:OnGameStart(isSave)
     initSprite(paperBg, "gfx/ui/paperbg.anm2")
     initSprite(arrowSprite, "gfx/ui/arrow.anm2")
 
+    initSprite(smallPaperBg, "gfx/ui/paper_small.anm2")
+    initSprite(pennySprite, "gfx/ui/coin.anm2", "penny")
+    initSprite(nickelSprite, "gfx/ui/coin.anm2", "nickel")
+
+
 end
 BDMod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, BDMod.OnGameStart)
+
+local function endDeclaringBet()
+    BDMod.data.declareBet = false
+end
+
+local arrowPositions = {
+    { -- Top (X)
+        -- Right (1) (1, 1) (Y)
+        Vector(185, 125),
+
+        -- Left (2) (1, 2) (Y)
+        Vector(255, 125),
+
+    },
+    { -- Bottom (X)
+        -- Right (3) (2, 1) (Y)
+        Vector(185, 155),
+
+        -- Left (4) (2, 2) (Y)
+        Vector(255, 155),
+    }
+}
+
+local arrowValues = {
+    {
+        1,
+        3
+    },
+    {
+        5,
+        10
+    },
+}
+
+local betToSpritesheet = {
+    [1] = "gfx/ui/penny.png",
+    [3] = "gfx/ui/pennies.png",
+    [5] = "gfx/ui/nickel.png",
+    [10] = "gfx/ui/nickels.png"
+}
+
+local function handleChangingArrowPos(cIndex)
+    if Input.IsActionTriggered(ButtonAction.ACTION_SHOOTUP, cIndex) then
+        if BDMod.data.dbArrowPos.x ~= 2 then return end
+        BDMod.data.dbArrowPos.x = 1
+    elseif Input.IsActionTriggered(ButtonAction.ACTION_SHOOTDOWN, cIndex) then
+        if BDMod.data.dbArrowPos.x ~= 1 then return end
+        BDMod.data.dbArrowPos.x = 2
+    elseif Input.IsActionTriggered(ButtonAction.ACTION_SHOOTRIGHT, cIndex) then
+        if BDMod.data.dbArrowPos.y ~= 1 then return end
+        BDMod.data.dbArrowPos.y = 2
+    elseif Input.IsActionTriggered(ButtonAction.ACTION_SHOOTLEFT, cIndex) then
+        if BDMod.data.dbArrowPos.y ~= 2 then return end
+        BDMod.data.dbArrowPos.y = 1
+    end
+end
+
+local function betRender()
+    if BDMod.data.controlsDisabledMenu == nil then -- Handle control enable / disable
+        BDMod.data.controlsDisabledMenu = true
+        for i=0, game:GetNumPlayers()-1 do
+            local player = Isaac.GetPlayer(i)
+
+            player.ControlsEnabled = false
+        end
+    end
+
+    local cIndex = BDMod.data.menuPlayer.ControllerIndex
+    handleChangingArrowPos(cIndex)
+
+    -- local mousePos = Input.GetMousePosition(true) -- get mouse position in world coordinates
+    -- local screenPos = Isaac.WorldToScreen(mousePos) -- transfer game- to screen coordinates
+    -- print(screenPos.X .. " " .. screenPos.Y)
+
+    smallPaperBg:Render(Vector(240, 135), vz, vz)
+    f:DrawString("Choose bet", 170, 95, KColor(0,0,0,1), 140, true)
+
+    -- Isaac.RenderText(".", screenPos.X, screenPos.Y, 1 ,1 ,1 ,1 )
+
+    -- Top Left (1c)
+    pennySprite:Render(Vector(200, 125))
+
+    -- Top Right (3c)
+    pennySprite:Render(Vector(270, 125))
+    pennySprite:Render(Vector(276, 125))
+    pennySprite:Render(Vector(282, 125))
+
+    -- Bottom Left (5c)
+    nickelSprite:Render(Vector(200, 155))
+
+    -- Bottom Right (10c)
+    nickelSprite:Render(Vector(270, 155))
+    nickelSprite:Render(Vector(276, 155))
+
+    -- Render Arrow Sprite
+    local arrowPos = BDMod.data.dbArrowPos
+
+    arrowSprite:Render(arrowPositions[arrowPos.x][arrowPos.y])
+
+    if Input.IsActionTriggered(ButtonAction.ACTION_BOMB, cIndex) then -- Finish choosing bet
+        local cost = arrowValues[arrowPos.x][arrowPos.y]
+        if cost > BDMod.data.menuPlayer:GetNumCoins() then
+            hf.playSound(SoundEffect.SOUND_BOSS2INTRO_ERRORBUZZ)
+            return
+        end
+
+        hf.playSound(SoundEffect.SOUND_PAPER_OUT)
+        BDMod.data.menuPlayer:AddCoins(-cost)
+        BDMod.data.betAmount = cost
+        BDMod.data.declareBet = false
+        initTrueGame = true
+    end
+
+end
 
 function BDMod:onRender()
     if Input.IsButtonPressed(Keyboard.KEY_LEFT_SHIFT, 0) and Input.IsButtonPressed(Keyboard.KEY_B, 0) and Input.IsButtonPressed(Keyboard.KEY_D, 0) then 
         BDMod.data.displayMenu = false
+        BDMod.data.declareBet = false
         for i=0, game:GetNumPlayers()-1 do
             local player = Isaac.GetPlayer(i)
             player.ControlsEnabled = true
@@ -187,6 +316,7 @@ function BDMod:onRender()
     end
 
     local cIndex = BDMod.data.menuPlayer.ControllerIndex
+
     if Input.IsActionTriggered(ButtonAction.ACTION_DROP, cIndex) then
         if BDMod.data.displayMenu then
             if BDMod.data.finishGame and bj.declareWinner(BDMod.hands.player, BDMod.hands.dealer) == "player" then
@@ -197,16 +327,21 @@ function BDMod:onRender()
                 end
             end
             bj.resetGame()
+        elseif BDMod.data.declareBet then
+            endDeclaringBet()
         end
     end
 
-    if not BDMod.data.displayMenu and BDMod.data.controlsDisabledMenu then
+    if not BDMod.data.displayMenu and BDMod.data.controlsDisabledMenu or not BDMod.data.declareBet and BDMod.data.controlsDisabledMenu then
         BDMod.data.controlsDisabledMenu = nil
         for i=0, game:GetNumPlayers()-1 do
             local player = Isaac.GetPlayer(i)
             player.ControlsEnabled = true
         end
     end
+
+    -- Bet Menu
+    if BDMod.data.declareBet then betRender() end
 
     if not BDMod.data.displayMenu then return end
 
@@ -240,12 +375,6 @@ function BDMod:onRender()
         BDMod.data.arrowPos = 1
     end
 
-    local mousePos = Input.GetMousePosition(true) -- get mouse position in world coordinates
-    local screenPos = Isaac.WorldToScreen(mousePos) -- transfer game- to screen coordinates
-    Isaac.RenderText("^", screenPos.X, screenPos.Y, 1 ,1 ,1 ,1 )
-    -- print(screenPos.X .. " " .. screenPos.Y)
-
-    -- paperBg:Render(Vector(240, 150), vz, vz)
     paperBg:Render(Vector(235, 135), vz, vz)
 
     if BDMod.data.arrowPos == 1 and not BDMod.data.lockControl then
@@ -421,6 +550,7 @@ local function removeBd(ent)
     return nil, nil, nil
 end
 
+---@param player EntityPlayer
 function BDMod:update(player)
 
     local bdEnt = getBdEnt(player)
@@ -454,11 +584,30 @@ function BDMod:update(player)
             return nil
         end
 
+        if player:GetNumCoins() < 1 then return end
+
         data.wasTouched = true
-        if player:GetNumCoins() >= requiredCoins then
-            player:AddCoins(-requiredCoins)
-            bdSprite:Play("PayPrize", false)
-            BDMod.data.menuPlayer = player
+
+        bdSprite:Play("PrePlay", true)
+        BDMod.data.menuPlayer = player
+    end
+
+    if initTrueGame then
+        bdSprite:ReplaceSpritesheet(2, betToSpritesheet[BDMod.data.betAmount])
+        bdSprite:LoadGraphics()
+        bdSprite:Play("PayPrize", true)
+        initTrueGame = false
+    end
+
+    if bdSprite:IsFinished("PrePlay") then
+        bdSprite:SetAnimation("Idle", true)
+        bdSprite:SetFrame(1)
+        if not BDMod.data.declareBet then
+            BDMod.data.dbArrowPos = {
+                x = 1,
+                y = 1
+            }
+            BDMod.data.declareBet = true
         end
     end
 
