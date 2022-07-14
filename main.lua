@@ -581,6 +581,316 @@ function BDMod:onRender()
 end
 BDMod:AddCallback(ModCallbacks.MC_POST_RENDER, BDMod.onRender)
 
+local rewardMap = {
+    [1] = {
+        [1] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY}
+        },
+
+        [2] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_DOUBLEPACK}
+        },
+
+        [3] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY}
+        },
+
+        [4] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_DOUBLEPACK},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_DOUBLEPACK},
+        },
+
+        [5] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY}
+        },
+
+        [6] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_NICKEL}
+        },
+
+        [7] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_DIAMONDS_2}
+        },
+
+        [8] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_DOLLAR}
+        },
+
+        [9] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_DIME}
+        },
+
+        [10] = {
+            {'break'}
+        },
+
+        [11] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_JUDGEMENT}
+        },
+
+    },
+
+    [3] = {
+        [1] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_KEY, KeySubType.KEY_DOUBLEPACK},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_KEY, KeySubType.KEY_DOUBLEPACK},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_KEY, KeySubType.KEY_DOUBLEPACK},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_KEY, KeySubType.KEY_DOUBLEPACK},
+        },
+
+        [2] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, BombSubType.BOMB_DOUBLEPACK},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, BombSubType.BOMB_DOUBLEPACK},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, BombSubType.BOMB_DOUBLEPACK},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, BombSubType.BOMB_DOUBLEPACK},
+        },
+
+        [3] = {
+            {'break'}
+        },
+
+        [4] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_DOLLAR},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_SKELETON_KEY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_PYRO},
+        },
+
+        [5] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LIL_BATTERY, BatterySubType.BATTERY_MICRO},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LIL_BATTERY, BatterySubType.BATTERY_MICRO},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LIL_BATTERY, BatterySubType.BATTERY_MICRO},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LIL_BATTERY, BatterySubType.BATTERY_MICRO},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LIL_BATTERY, BatterySubType.BATTERY_MICRO},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LIL_BATTERY, BatterySubType.BATTERY_MICRO},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LIL_BATTERY, BatterySubType.BATTERY_MICRO},
+        },
+
+        [6] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_KEY, KeySubType.KEY_NORMAL},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, BombSubType.BOMB_NORMAL},
+        },
+
+        [7] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_CLUBS_2},
+        },
+
+        [8] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_SPADES_2},
+        },
+
+        [9] = {
+            {'usemega'},
+        },
+
+        [10] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), false, true, true)}
+        },
+
+        [11] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_NICKEL}
+        },
+
+        [12] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, game:GetItemPool():GetPill(Random())}
+        },
+
+    },
+
+    [5] = {
+        [1] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)}
+        },
+
+        [2] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
+        },
+
+        [3] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)}
+        },
+
+        [4] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
+        },
+
+        [5] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), false, true, true)},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), false, true, true)},
+        },
+
+        [6] = {
+            {'break'}
+        },
+
+        [7] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_HOLY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_HOLY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_HOLY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_HOLY},
+        },
+
+        [8] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY},
+        },
+
+        [9] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()}
+        },
+
+        [10] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_CHEST, 1},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_CHEST, 1},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_CHEST, 1},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LOCKEDCHEST, 1}
+
+        },
+
+        [11] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_REVERSE_JUDGEMENT}
+        },
+
+    },
+
+    [10] = {
+        [1] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_DIME},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_DIME},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_NICKEL},
+        },
+
+        [2] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY},
+        },
+
+        [3] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_TREASURE, true)},
+        },
+
+        [4] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_SHOP, true)},
+        },
+
+        [5] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, true)},
+        },
+
+        [6] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_DEVIL, true)},
+        },
+
+        [7] = {
+            {'break'},
+        },
+
+        [8] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_DOLLAR},
+        },
+
+        [9] = {
+            {'43coins'}
+        },
+
+        [10] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_POOP},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_POOP},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_POOP},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_POOP},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_POOP},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_POOP},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_POOP},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_POOP},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_DICE_SHARD},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_DICE_SHARD},
+        },
+
+        [11] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_BABY_SHOP, true)},
+        },
+
+        [12] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()},
+        },
+
+        [13] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LOCKEDCHEST, 1},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LOCKEDCHEST, 1},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LOCKEDCHEST, 1},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LOCKEDCHEST, 1},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_REDCHEST, 1},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_REDCHEST, 1},
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_CHEST, 1},
+
+        },
+
+        [14] = {
+            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_CURSE, true)},
+        },
+    },
+}
+
+local betToRewardIdx = {
+    [1] = getResultByChance(BDMod.rng, 40, 20, 10, 5, 5, 5, 5, 1, 2, 2, 5),
+    [3] = getResultByChance(BDMod.rng, 10, 10, 4, 1, 5, 20, 5, 5, 5, 5, 20, 10),
+    [5] = getResultByChance(BDMod.rng, 20, 20, 10, 10, 1, 2, 2, 5, 10, 10, 10),
+    [10] = getResultByChance(BDMod.rng, 10, 10, 10, 20, 5, 5, 2, 2, 5, 1, 5, 10, 10, 5)
+}
+
+---@param bdEnt EntityNPC
+local function spawnReward(bdEnt)
+    local betAmt = BDMod.data.betAmount
+    local rewardIdx = betToRewardIdx[betAmt]
+    local rewards = rewardMap[betAmt][rewardIdx]
+
+    local freePos = function (step)
+        if step == nil then
+            step = 50
+        end
+        return Isaac.GetFreeNearPosition(bdEnt.Position, step)
+    end
+
+    for _, reward in pairs(rewards) do
+        if reward[1] == 'break' then
+            return false
+        end
+
+        if reward[1] == 'usemega' then
+            BDMod.data.menuPlayer:UseActiveItem(CollectibleType.COLLECTIBLE_MAMA_MEGA)
+            return
+        end
+
+        if reward[1] == '43coins' then
+            for _ = 0, 43 do
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY,
+                            Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 20), vz, bdEnt)
+            end
+            return
+        end
+
+        Isaac.Spawn(reward[1], reward[2], reward[3], freePos(), vz, bdEnt)
+    end
+end
+
+
 local function removeBd(ent)
     ent:Kill()
     ent:Remove()
@@ -607,7 +917,7 @@ function BDMod:update(player)
     -- Bomb destruction
     for i, entity in pairs(Isaac.FindByType(EntityType.ENTITY_EFFECT, EffectVariant.BOMB_EXPLOSION)) do
         if bdPos:Distance(entity.Position) < 120 then
-                bdEnt, bdPos, bdSprite = removeBd(bdEnt)
+            bdEnt, bdPos, bdSprite = removeBd(bdEnt)
             return
         end
     end
@@ -659,34 +969,13 @@ function BDMod:update(player)
     if BDMod.data.gameWon then
         bdSprite:Play("Prize")
         if bdSprite:IsEventTriggered("Prize") then
-            player:AddCoins(requiredCoins)
             hf.playSound(SoundEffect.SOUND_NICKELPICKUP)
 
-            local reward = getResultByChance(BDMod.rng, 40, 10, 5, 15, 10, 20)
-            local freePos = function ()
-                return Isaac.GetFreeNearPosition(bdPos, 50)
-            end
+            local reward = spawnReward(bdEnt)
 
-            if reward == 1 then
-                local card = specialCards[hf.randint(BDMod.rng, 1, #specialCards)]
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, card, freePos(), vz, bdEnt)
-            elseif reward == 2 then
-                for i = 0, 1 do
-                    local card = specialCards[hf.randint(BDMod.rng, 1, #specialCards)]
-                    Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, card, freePos(), vz, bdEnt)
-                end
-            elseif reward == 3 then
-                ---@diagnostic disable-next-line: param-type-mismatch
-                local rewardItem = game:GetItemPool():GetCollectible(ItemPoolType.POOL_CRANE_GAME, true, hf.randint(BDMod.rng, 1, 10000), 0)
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, rewardItem, freePos(), vz, bdEnt)
-            elseif reward == 4 then
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_LUCKYPENNY, freePos(), vz, bdEnt)
-            elseif reward == 5 then
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, BombSubType.BOMB_NORMAL, freePos(), vz, bdEnt)
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, BombSubType.BOMB_NORMAL, freePos(), vz, bdEnt)
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_KEY, KeySubType.KEY_NORMAL, freePos(), vz, bdEnt)
-            elseif reward == 6 then
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_NICKEL, freePos(), vz, bdEnt)
+            if reward == false then
+                bdEnt, bdPos, bdSprite = removeBd(bdEnt)
+                return
             end
         end
 
