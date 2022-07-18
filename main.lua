@@ -685,7 +685,10 @@ local rewardMap = {
         },
 
         [10] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), false, true, true)}
+            isfunction = true,
+            fn = function ()
+                return {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), false, true, true)}}
+            end
         },
 
         [11] = {
@@ -693,41 +696,54 @@ local rewardMap = {
         },
 
         [12] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, game:GetItemPool():GetPill(Random())}
+            isfunction = true,
+            fn = function ()
+                return {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, game:GetItemPool():GetPill(Random())}}
+            end
         },
 
     },
 
     [5] = {
         [1] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)}
+            isfunction = true,
+            fn = function ()
+                return  {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)}}
+            end
         },
 
         [2] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
+            isfunction = true,
+            fn = function ()
+                return {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]}}
+            end
         },
 
         [3] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)}
+            isfunction = true,
+            fn = function ()
+                return  {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
+                        {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
+                        {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
+                        {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)}}
+            end
+
         },
 
         [4] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
+            isfunction = true,
+            fn = function ()
+                return  {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
+                        {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]}}
+            end
+
         },
 
         [5] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), true, false, false)},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), false, true, true)},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, game:GetItemPool():GetCard(Random(), false, true, true)},
+            isfunction = true,
+            fn = function ()
+                return {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, specialCards[hf.randint(BDMod.rng, 1, #specialCards)]}}
+            end
         },
 
         [6] = {
@@ -749,8 +765,11 @@ local rewardMap = {
         },
 
         [9] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()}
+            isfunction = true,
+            fn = function ()
+                return  {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()},
+                        {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()}}
+            end
         },
 
         [10] = {
@@ -782,19 +801,31 @@ local rewardMap = {
         },
 
         [3] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_TREASURE, true)},
+            isfunction = true,
+            fn = function ()
+                return  {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_TREASURE, true)}}
+            end
         },
 
         [4] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_SHOP, true)},
+            isfunction = true,
+            fn = function ()
+                return  {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_SHOP, true)}}
+            end
         },
 
         [5] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, true)},
+            isfunction = true,
+            fn = function ()
+                return  {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, true)}}
+            end
         },
 
         [6] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_DEVIL, true)},
+            isfunction = true,
+            fn = function ()
+                return {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_DEVIL, true)}}
+            end
         },
 
         [7] = {
@@ -823,12 +854,19 @@ local rewardMap = {
         },
 
         [11] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_BABY_SHOP, true)},
+            isfunction = true,
+            fn = function ()
+                return {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_BABY_SHOP, true)}}
+            end
         },
 
         [12] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()},
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()},
+            isfunction = true,
+            fn = function ()
+                return  {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()},
+                        {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, game:GetItemPool():GetTrinket()}}
+            end
+
         },
 
         [13] = {
@@ -843,22 +881,25 @@ local rewardMap = {
         },
 
         [14] = {
-            {EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_CURSE, true)},
+            isfunction = true,
+            fn = function ()
+                return {{EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, game:GetItemPool():GetCollectible(ItemPoolType.POOL_CURSE, true)}}
+            end
         },
     },
 }
 
 local betToRewardIdx = {
-    [1] = getResultByChance(BDMod.rng, 40, 20, 10, 5, 5, 5, 5, 1, 2, 2, 5),
-    [3] = getResultByChance(BDMod.rng, 10, 10, 4, 1, 5, 20, 5, 5, 5, 5, 20, 10),
-    [5] = getResultByChance(BDMod.rng, 20, 20, 10, 10, 1, 2, 2, 5, 10, 10, 10),
-    [10] = getResultByChance(BDMod.rng, 10, 10, 10, 20, 5, 5, 2, 2, 5, 1, 5, 10, 10, 5)
+    [1] = function() return getResultByChance(BDMod.rng, 40, 20, 10, 5, 5, 5, 5, 1, 2, 2, 5) end,
+    [3] = function() return getResultByChance(BDMod.rng, 10, 10, 4, 1, 5, 20, 5, 5, 5, 5, 20, 10) end,
+    [5] = function() return getResultByChance(BDMod.rng, 20, 20, 10, 10, 1, 2, 2, 5, 10, 10, 10) end,
+    [10] = function() return getResultByChance(BDMod.rng, 10, 10, 10, 20, 5, 5, 2, 2, 5, 1, 5, 10, 10, 5) end
 }
 
 ---@param bdEnt EntityNPC
 local function spawnReward(bdEnt)
     local betAmt = BDMod.data.betAmount
-    local rewardIdx = betToRewardIdx[betAmt]
+    local rewardIdx = betToRewardIdx[betAmt]()
     local rewards = rewardMap[betAmt][rewardIdx]
 
     local freePos = function (step)
@@ -866,6 +907,10 @@ local function spawnReward(bdEnt)
             step = 50
         end
         return Isaac.GetFreeNearPosition(bdEnt.Position, step)
+    end
+
+    if rewards.isfunction then
+        rewards = rewards.fn()
     end
 
     for _, reward in pairs(rewards) do
