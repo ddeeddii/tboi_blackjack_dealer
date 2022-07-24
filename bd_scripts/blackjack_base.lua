@@ -1,5 +1,5 @@
 local bj = {}
-local hf = require('scripts.helpers')
+local hf = require('bd_scripts.helpers')
 
 function bj.newDeck()
     BDMod.deck = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
