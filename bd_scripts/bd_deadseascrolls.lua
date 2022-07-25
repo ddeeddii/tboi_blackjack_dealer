@@ -87,10 +87,11 @@ local bdirectory = {
             dssmod.paletteButton,
             {
                 str = 'arcade spawn %',
+                suf = '%',
                 increment = 1,
                 max = 100,
-                variable = 'savedata.bdSpawnChance',
-                setting = 100,
+                variable = 'bdSpawnChance',
+                setting = 50,
                 load = function()
                     return BDMod.savedata.bdSpawnChance
                 end,
@@ -101,10 +102,11 @@ local bdirectory = {
             },
             {
                 str = 'general spawn %',
+                suf = '%',
                 increment = 1,
                 max = 100,
-                variable = 'savedata.generalSpawnChance',
-                setting = 100,
+                variable = 'generalSpawnChance',
+                setting = 0,
                 load = function()
                     return BDMod.savedata.generalSpawnChance
                 end,
@@ -116,11 +118,11 @@ local bdirectory = {
             {
                 str = 'must hit until',
                 choices = {'always stand', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', 'always hit'},
-                variable = 'savedata.dealerHitMax',
+                variable = 'dealerHitMax',
                 increment = 1,
                 min = 1,
                 max = 20,
-                setting = 20,
+                setting = 17,
                 load = function()
                     return BDMod.savedata.dealerHitMax
                 end,
@@ -132,8 +134,8 @@ local bdirectory = {
             {
                 str = 'card amount',
                 choices = {'hidden', 'shown'},
-                variable = 'savedata.displayCardAmt',
-                setting = 2,
+                variable = 'displayCardAmt',
+                setting = 1,
                 load = function()
                     return BDMod.savedata.displayCardAmt and 2 or 1
                 end,
