@@ -20,12 +20,12 @@ Reward pools can be found [url=https://pastebin.com/p3HCp7nR]here[/url]
 
 Special thanks to:
 [url=https://steamcommunity.com/id/goncholito0/]Goncholito[/url] for the paper background sprite
-[url=https://steamcommunity.com/id/discowy20/]Discowy[/url] for help with other sprites & balancing
-[url=https://github.com/Meowlala/DeadSeaScrollsMenu]DeadInfinity[/url]for creating & maintaining DSS
+[url=https://steamcommunity.com/id/discowy20/]Discowy[/url] for help with other sprites and balancing
+[url=https://github.com/Meowlala/DeadSeaScrollsMenu]DeadInfinity[/url]for creating and maintaining DSS
 
 
 You can check this mod's github repo [url=https://github.com/ddeeddii/tboi_blackjack_dealer] here [/url]</description>
-    <version>2.1</version>
+    <version>2.2</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
 </metadata>
