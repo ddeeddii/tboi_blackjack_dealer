@@ -3,49 +3,29 @@
     <name>Blackjack Dealer</name>
     <directory>blackjack dealer</directory>
     <id>2599546253</id>
-    <description>[h1] Time to fuel your gambling addiction with the Blackjack Dealer mod! [/h1]
+    <description>[h1] Time to fuel your gambling addiction with the Blackjack Dealer [/h1]
 
-This mod adds a blackjack dealer beggar to [b]arcade rooms[/b].
+This mod adds a blackjack dealer beggar to the game.
 
-The default spawn chance is 50% (although you can use [b]Mod Config Menu[/b] to change it) to replace any machine, beggar or shell game in an arcade room.
+The Dealer spawns by replacing an already existing slot machine or beggar.
+By default, the spawn chance is 50% in arcade rooms and 0% in other rooms, however, that can be changed in the config.
 
-To play blackjack - you simply walk up to him. One game costs [b]5 cents[/b]. If you win, you get your coins back on top of the reward.
+To access the config, press [b]C[/b]. Note that you do [b]not[/b] need Mod Config Menu - everything is included!
 
-[b]How to play blackjack? Check the Discussions or [url=https://www.blackjackapprenticeship.com/how-to-play-blackjack/] look it up. [/url][/b]
+You can play blackjack by walking up to the Dealer. There you will select your bet (1, 3, 5 or 10 coins). Each bet has a different reward pool - if you manage to [b]win[/b] the game, you will be granted a reward from the pool.
 
-[b]Controls:[/b]
-[list]
-[*]Shoot left/right - Change the arrow to go hit/stand
-[*]Bomb - Trigger the action selected by the arrow
-[*]Drop - Leave the menu
-[/list]
-[b]Payouts:[/b]
-[list]
-[*]40% - 1 &quot;Special&quot; card which is basically just a playing card.
-[*]20% - 2 Random cards
-[*]15% - 1 Lucky penny &amp; 2 normal pennies
-[*]10% -  2 Keys &amp; 2 bombs
-[*]5% - 1 Dime
-[*]4% - 1 Random item from the claw machine item pool
-[*]3% - 1 Chest
-[*]2% - 1 Random Trinket
-[*]1% - Destruction of the beggar
-[/list]
+How to play blackjack? Check discussions 
 
-The beggar/dealer npc's type is 6 and the variant is 72, so you can spawn it with [code] spawn 6.72 [/code]
+Reward pools can be found [url=https://pastebin.com/p3HCp7nR]here[/url]
 
-[b]Possible future additions:[/b]
-Increase the max amount of cards, so that they don't get off the paper after more than 7 cards
+Special thanks to:
+[url=https://steamcommunity.com/id/goncholito0/]Goncholito[/url] for the paper background sprite
+[url=https://steamcommunity.com/id/discowy20/]Discowy[/url] for help with other sprites & balancing
+[url=https://github.com/Meowlala/DeadSeaScrollsMenu]DeadInfinity[/url]for creating & maintaining DSS
 
-[b] Bug notice: [/b]
-Sometimes when the player/dealer hits the card isn't added but the sound plays. Also sometimes the dealer's hidden card isn't shown. 
-I have no clue what causes these bugs, however [b]I believe they're completely harmless and don't substancially affect gameplay[b].
-
-Thanks to Discowy 2.0 for the help with sprites and balancing.
 
 You can check this mod's github repo [url=https://github.com/ddeeddii/tboi_blackjack_dealer] here [/url]</description>
-    <version>1.7</version>
+    <version>2.1</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
-    <tag id="Familiars"/>
 </metadata>
